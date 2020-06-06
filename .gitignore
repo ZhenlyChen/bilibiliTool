@@ -3,3 +3,6 @@ out/*
 .idea/*
 
 *.txt
+cookies.json
+*.exe
+*.dll

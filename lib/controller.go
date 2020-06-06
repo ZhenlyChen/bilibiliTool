@@ -7,12 +7,12 @@ import (
 )
 
 type Controller struct {
-	cookies Cookies
+	Cookies Cookies
 }
 
 func NewController(cookies Cookies) Controller {
 	req := Controller{
-		cookies: cookies,
+		Cookies: cookies,
 	}
 	return req
 }
@@ -22,7 +22,7 @@ type ResponseCallback func()
 func (c *Controller) Request(url string, data interface{}, callback ResponseCallback) {
 	req := colly.NewCollector()
 	req.OnRequest(func(r *colly.Request) {
-		r.Headers.Set("Cookie", c.cookies.GetCookiesHeader())
+		r.Headers.Set("Cookie", c.Cookies.GetHeader())
 	})
 	req.OnError(func(r *colly.Response, err error) {
 		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)

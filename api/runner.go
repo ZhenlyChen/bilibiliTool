@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"encoding/json"
@@ -8,6 +8,9 @@ import (
 	"strconv"
 	"time"
 )
+
+// task := MakeRunner(lib.NewController(lib.SetCookies()))
+// task.GetData()
 
 type Runner struct {
 	c      lib.Controller
@@ -261,20 +264,20 @@ func getVideoListData(r *Runner) lib.TaskRunner {
 }
 
 func (r *Runner) GetData() {
-	taskFlow := lib.MakeFlow([]lib.TaskRunner{
+	flow := lib.MakeFlow([]lib.TaskRunner{
 		getUserData(r),
-		getStatData(r),
-		getBaseData(r),
-		getTrendData(r),
-		getNewFansData(r),
-		getFansData(r),
-		getAllIncData(r),
-		getAllSurveyData(r),
-		getPlaySourceData(r),
-		getAllPlayAnalysisData(r),
-		getVideoListData(r),
+		//getStatData(r),
+		//getBaseData(r),
+		//getTrendData(r),
+		//getNewFansData(r),
+		//getFansData(r),
+		//getAllIncData(r),
+		//getAllSurveyData(r),
+		//getPlaySourceData(r),
+		//getAllPlayAnalysisData(r),
+		//getVideoListData(r),
 	})
-	taskFlow.Next()
+	flow.Next()
 }
 
 func (r *Runner) getDirPath() string {
@@ -300,3 +303,4 @@ func (r *Runner) deal(name string, baseData entity.BaseData, data interface{}) b
 	return true
 
 }
+

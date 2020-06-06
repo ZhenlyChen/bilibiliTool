@@ -1,40 +1,22 @@
 package lib
 
 import (
-	"bufio"
+	"context"
 	"encoding/json"
-	"fmt"
+	"github.com/chromedp/cdproto/network"
+	"github.com/chromedp/chromedp"
 	"io/ioutil"
-	"os"
+	"log"
 )
 
-type CookieData struct {
-	Domain         string `json:"domain"`
-	ExpirationDate float32    `json:"expirationDate"`
-	HostOnly       bool   `json:"hostOnly"`
-	HTTPOnly       bool   `json:"httpOnly"`
-	Name           string `json:"name"`
-	Path           string `json:"path"`
-	SameSite       string `json:"sameSite"`
-	Secure         bool   `json:"secure"`
-	Session        bool   `json:"session"`
-	StoreID        string `json:"storeId"`
-	Value          string `json:"value"`
-	ID             int64    `json:"id"`
-}
-
 type Cookies struct {
-	data []CookieData
+	Data []network.Cookie
 	header string
 }
 
-func (c *Cookies) GetCookies() []CookieData {
-	return c.data
-}
-
-func (c *Cookies) GetCookiesHeader() string {
+func (c *Cookies) GetHeader() string {
 	if c.header == "" {
-		for _, data := range c.data {
+		for _, data := range c.Data {
 			if c.header != "" {
 				c.header += "; "
 			}
@@ -44,46 +26,59 @@ func (c *Cookies) GetCookiesHeader() string {
 	return c.header
 }
 
-func ClearCookies() {
-	_ = ioutil.WriteFile("./cookies.txt", []byte(""), 0644)
-}
-
-func LoadCookies() Cookies  {
-	fileName := "./cookies.txt"
-	cookies := Cookies{}
+func (c *Cookies) LoadFromFile() bool {
+	fileName := "./Cookies.json"
 	if ExistsFile(fileName) {
 		data, err := ioutil.ReadFile(fileName)
-		if err == nil && len(data) > 0 {
-			cookies.header = string(data)
-			return cookies
+		if err != nil && len(data) == 0 {
+			return false
+		}
+		if err := json.Unmarshal(data, &c.Data); err != nil {
+			log.Println("序列化Cookie失败", err)
+			return false
 		}
 	}
-	fmt.Print("请输入Cookies：")
-	cookiesStr := ""
-	input := bufio.NewScanner(os.Stdin)
-	cookieType := 0
-	for input.Scan() {
-		line := input.Text()
-		if cookieType == 0 && len(line) > 0 && line[0] == '[' {
-			cookieType = 1
+	return true
+}
+
+func ClearCookies() {
+	_ = ioutil.WriteFile("./Cookies.json", []byte(""), 0644)
+}
+
+func CheckLogin() chromedp.Action {
+	return chromedp.WaitReady("#internationalHeader > div.mini-header.m-header > div > div.nav-user-center > div.user-con.signin > div:nth-child(7) > a > span")
+}
+
+func SaveCookies() chromedp.Action {
+	return chromedp.ActionFunc(func(ctx context.Context) error {
+		cookies, err := network.GetAllCookies().Do(ctx)
+		if err != nil {
+			return err
 		}
-		cookiesStr += line
-		if cookieType == 1 {
-			cookiesStr += "\n"
+		text, err := json.Marshal(cookies)
+		if err != nil {
+			log.Println("序列化登录态失败")
 		}
-		if cookieType == 0 || line == "]" {
-			break
+		if err := ioutil.WriteFile("./Cookies.json", text, 0644); err != nil {
+			log.Println("写入文件失败", err)
 		}
-	}
-	if cookieType == 1 {
-		if err := json.Unmarshal([]byte(cookiesStr), &cookies.data); err != nil {
-			fmt.Print("解析失败：", err)
+		return nil
+	})
+}
+
+
+func SetCookies(cookies Cookies) chromedp.Action {
+	return chromedp.ActionFunc(func(ctx context.Context) error {
+		// 读取Cookies
+		for _, cookie := range cookies.Data {
+			success, err := network.SetCookie(cookie.Name, cookie.Value).
+				WithDomain(cookie.Domain).
+				Do(ctx)
+			if err != nil || !success {
+				log.Println("设置Cookie失败", err)
+				return err
+			}
 		}
-	} else {
-		cookies.header = cookiesStr
-	}
-	if err := ioutil.WriteFile(fileName, []byte(cookies.GetCookiesHeader()),0644); err != nil {
-		fmt.Print("写入文件错误：", err)
-	}
-	return cookies
+		return nil
+	})
 }

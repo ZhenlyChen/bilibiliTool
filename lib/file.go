@@ -1,10 +1,41 @@
 package lib
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 )
+
+type TocData struct {
+	IsDir bool `json:"isDir"`
+	Name string `json:"name"`
+}
+
+// 生成目录
+func MakeToc(path string) {
+	files := GetDirs(path)
+	var data []TocData
+	for _, file := range files {
+		if file.IsDir() {
+			MakeToc(path + "/" + file.Name())
+		}
+		if file.Name() != "toc.json" {
+			data = append(data, TocData{
+				IsDir: file.IsDir(),
+				Name: file.Name(),
+			})
+		}
+	}
+	b, err := json.Marshal(data)
+	if err != nil {
+		fmt.Println("序列化目录失败", err)
+		return
+	}
+	if err := ioutil.WriteFile(path + "/toc.json", b, 0644); err != nil {
+		fmt.Println("写入文件失败", err)
+	}
+}
 
 func GetDirs(path string) []os.FileInfo{
 	files, err := ioutil.ReadDir(path)
