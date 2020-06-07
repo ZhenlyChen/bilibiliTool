@@ -3,6 +3,7 @@ package lib
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/chromedp/cdproto/network"
 	"github.com/chromedp/chromedp"
 	"io/ioutil"
@@ -23,6 +24,7 @@ func (c *Cookies) GetHeader() string {
 			c.header += data.Name + "=" + data.Value
 		}
 	}
+	fmt.Println(c.header)
 	return c.header
 }
 
@@ -39,6 +41,12 @@ func (c *Cookies) LoadFromFile() bool {
 		}
 	}
 	return true
+}
+
+func (c *Cookies) Clear() {
+	ClearCookies()
+	c.Data = []network.Cookie{}
+	c.header = ""
 }
 
 func ClearCookies() {

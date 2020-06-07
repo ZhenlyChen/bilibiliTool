@@ -31,8 +31,11 @@ func InitServer() Server {
 func (s *Server) Run() {
 	r := gin.Default()
 	r.GET("/api/user", api.LoginRequestHandler(&s.controller))
-	r.GET("/api/login", api.LoginHandler(&s.controller))
-	r.GET("/api/task", api.TaskHandler(&s.controller))
+	r.GET("/api/stat", api.StatRequestHandler(&s.controller))
+	r.GET("/api/data", api.GetDataHandler(&s.controller))
+	r.POST("/api/login", api.LoginHandler(&s.controller))
+	r.POST("/api/logout", api.LogoutHandler(&s.controller))
+	r.POST("/api/task", api.TaskHandler(&s.controller))
 	r.Use(static.Serve("/", static.LocalFile("./web/dist", true)))
 	r.Use(static.Serve("/data", static.LocalFile("./data", true)))
 

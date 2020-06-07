@@ -5,10 +5,11 @@ import {
   INavStyles,
   INavLinkGroup,
 } from "office-ui-fabric-react/lib/Nav";
-import { Stack, Text, FontIcon } from "office-ui-fabric-react";
-import { useStore } from "../Store";
+import { Stack, Text, FontIcon, MessageBarType } from "office-ui-fabric-react";
+import { useStore, showMessage } from "../Store";
 import { UserInfo } from "../common/UserInfo";
-import { useRouteMatch, useLocation } from "react-router";
+import { useLocation } from "react-router";
+import axios from "axios";
 
 const navStyles: Partial<INavStyles> = {
   root: {
@@ -28,9 +29,14 @@ const navLinkGroups: INavLinkGroup[] = [
         key: "realTimeData",
       },
       {
-        name: "查看历史数据",
+        name: "个人数据分析",
         url: "/#/history",
         key: "history",
+      },
+      {
+        name: "视频数据分析",
+        url: "/#/video",
+        key: "video",
       },
       {
         name: "获取当日数据",
@@ -55,15 +61,35 @@ export const AppMenu: React.FunctionComponent = () => {
     key = "history";
   } else if (location.pathname.indexOf("/task") === 0) {
     key = "task";
+  } else if (location.pathname.indexOf("/video") === 0) {
+    key = "video";
   } else {
     key = "realTimeData";
   }
+
+  const logoutHandler = async () => {
+    try {
+      await axios.post("/api/logout");
+      window.location.href = "/#/welcome";
+    } catch (err) {
+      showMessage(store, "退出登录失败" + err, MessageBarType.error);
+      console.log(err);
+    }
+  };
+
+  const _onLinkClick = (
+    ev?: React.MouseEvent<HTMLElement>,
+    item?: INavLink
+  ) => {
+    if (item && item.key === "logout") {
+      logoutHandler();
+    }
+  };
 
   return (
     <Stack
       style={{
         height: "100vh",
-        background: "#fbfbfb",
         boxShadow: "0 0 20px rgba(43,45,56,.08)",
       }}
     >
@@ -106,9 +132,3 @@ export const AppMenu: React.FunctionComponent = () => {
     </Stack>
   );
 };
-
-function _onLinkClick(ev?: React.MouseEvent<HTMLElement>, item?: INavLink) {
-  if (item && item.key === "logout") {
-    alert("News link clicked");
-  }
-}

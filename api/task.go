@@ -8,10 +8,53 @@ import (
 )
 
 func TaskHandler(controller *lib.Controller) gin.HandlerFunc {
-	return func(c *gin.Context) {
+	return func(ctx *gin.Context) {
 		task := MakeRunner(*controller)
-		task.GetData()
-		c.JSON(200, BaseRes{200, "执行任务成功"})
+
+		taskType := ctx.DefaultQuery("type", "none")
+
+		var tasks =  []lib.TaskRunner {
+			getUserData(&task),
+		}
+
+		switch taskType {
+		case "base":
+			// 获取基本信息（用户信息、总体数据、游客画像、粉丝数据）
+			tasks = append(tasks, getStatData(&task))
+			tasks = append(tasks, getBaseData(&task))
+			tasks = append(tasks, getTrendData(&task))
+			tasks = append(tasks, getNewFansData(&task))
+			tasks = append(tasks, getFansData(&task))
+			tasks = append(tasks, getPlaySourceData(&task))
+		case "inc":
+			// 增量数据 (增量数据/来源稿件)
+			tasks = append(tasks, getAllIncData(&task))
+			tasks = append(tasks, getAllSurveyData(&task))
+		case "video":
+			// 视频数据
+			tasks = append(tasks, getVideoListData(&task))
+		default:
+			ctx.JSON(200, BaseRes{10000, "无效的任务类型"})
+			return
+		}
+		flow := lib.MakeFlow(tasks)
+		flow.FinishHandler = func() {
+			lib.MakeToc("./data")
+			ctx.JSON(200, BaseRes{0, "任务完成"})
+		}
+		flow.ErrorHandler = func(err string) {
+			lib.MakeToc("./data")
+			ctx.JSON(200, BaseRes{10000, err})
+		}
+		flow.Next()
+	}
+}
+
+func LogoutHandler(c *lib.Controller) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		c.Cookies.Clear()
+		c.Cache.Clear()
+		ctx.JSON(200, BaseRes{0, "ok"})
 	}
 }
 
@@ -49,7 +92,7 @@ func LoginHandler(controller *lib.Controller) gin.HandlerFunc {
 			})
 		} else {
 			gCtx.JSON(200, BaseRes{
-				Code: 200,
+				Code: 0,
 				Msg: "登录成功",
 			})
 		}

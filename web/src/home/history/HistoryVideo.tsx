@@ -3,7 +3,7 @@ import { Stack, Text } from "office-ui-fabric-react";
 import React, { useEffect } from "react";
 import { service } from "../../Service";
 
-export const HistoryData: React.FunctionComponent = () => {
+export const HistoryVideo: React.FunctionComponent = () => {
   const store = useStore();
 
   const fetchData = async () => {
@@ -37,7 +37,7 @@ export const HistoryData: React.FunctionComponent = () => {
             color: "#fb7299",
           }}
         >
-          个人数据分析
+          视频数据分析
         </Text>
       </Stack.Item>
       <Stack.Item></Stack.Item>

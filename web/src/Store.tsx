@@ -40,10 +40,10 @@ export const useStore = () => {
 };
 
 export const showMessage = (
+  store: TStore,
   msg: string,
   type: MessageBarType = MessageBarType.info
 ) => {
-  const store = useStore();
   store.message.msg = msg;
   store.message.type = type;
 };

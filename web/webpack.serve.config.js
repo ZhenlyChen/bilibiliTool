@@ -12,6 +12,7 @@ module.exports = webpackMerge(
     devServer: {
       proxy: {
         "/api": "http://localhost:8081",
+        "/data": "http://localhost:8081",
       },
     },
   },

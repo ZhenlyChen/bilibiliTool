@@ -3,16 +3,44 @@ package lib
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ZhenlyChen/BiliBiliStatistics/entity"
 	"github.com/gocolly/colly/v2"
+	"time"
 )
 
+type CacheData struct {
+	UserData entity.NavData
+	UserTime time.Time
+
+	StatData entity.StatData
+	StatTime time.Time
+}
+
+func (c *CacheData) Clear() {
+	c.UserTime = time.Unix(0, 0)
+	c.StatTime = time.Unix(0, 0)
+}
+
+func (c *CacheData) IsTimeout(cacheTime time.Time) bool {
+	// 缓存策略：同一天内12小时
+	return cacheTime.Add(time.Hour * 12).Before(time.Now()) ||
+		cacheTime.Day() != time.Now().Day()
+}
+
 type Controller struct {
-	Cookies Cookies
+	Cookies   Cookies
+	Cache     CacheData
+	DataMaker ArchiveMaker
 }
 
 func NewController(cookies Cookies) Controller {
 	req := Controller{
 		Cookies: cookies,
+		Cache: CacheData{
+			UserTime: time.Unix(0,0),
+			StatTime: time.Unix(0,0),
+		},
+		DataMaker: NewArchiveMaker(""),
 	}
 	return req
 }

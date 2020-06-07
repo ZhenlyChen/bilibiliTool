@@ -5,19 +5,11 @@ import {
   PrimaryButton,
   MessageBarType,
 } from "office-ui-fabric-react";
-import { mergeStyles } from "office-ui-fabric-react/lib/Styling";
-import { FontIcon } from "office-ui-fabric-react/lib/Icon";
 import { Spinner, SpinnerSize } from "office-ui-fabric-react/lib/Spinner";
 import { useStore, showMessage } from "../Store";
 import { useObserver } from "mobx-react-lite";
 import axios from "axios";
 import { UserInfo } from "../common/UserInfo";
-
-const iconClass = mergeStyles({
-  fontSize: 48,
-  margin: "12px",
-  color: "#fb7299",
-});
 
 export const WelcomePage: React.FunctionComponent = () => {
   const store = useStore();
@@ -37,21 +29,25 @@ export const WelcomePage: React.FunctionComponent = () => {
         store.user.id = -1;
       }
     } catch (err) {
-      showMessage("获取登录状态失败：" + err, MessageBarType.error);
+      showMessage(store, "获取登录状态失败：" + err, MessageBarType.error);
       console.log(err);
     }
   };
 
   const loginHandler = async () => {
     try {
-      const res = await axios.get("/api/login");
-      if (res.data.Code === 200) {
+      const res = await axios.post("/api/login");
+      if (res.data.Code === 0) {
         fetchUser();
       } else {
-        showMessage("调用登录接口失败：" + res.data.Msg, MessageBarType.error);
+        showMessage(
+          store,
+          "调用登录接口失败：" + res.data.Msg,
+          MessageBarType.error
+        );
       }
     } catch (err) {
-      showMessage("调用登录接口失败：" + err, MessageBarType.error);
+      showMessage(store, "调用登录接口失败：" + err, MessageBarType.error);
       console.log(err);
     }
   };
@@ -88,15 +84,7 @@ export const WelcomePage: React.FunctionComponent = () => {
       </Text>
       <Text>
         {store.user.id === -1 ? (
-          <PrimaryButton
-            text="登录账号"
-            onClick={loginHandler}
-            allowDisabledFocus
-            style={{
-              background: "#fb7299",
-              borderColor: "#fb7299",
-            }}
-          />
+          <PrimaryButton text="登录账号" onClick={loginHandler} />
         ) : (
           store.user.id !== 0 && UserInfo(store.user.name, store.user.avatar)
         )}

@@ -35,6 +35,8 @@ func getUserData(r *Runner) lib.TaskRunner {
 			}
 			if r.deal("用户信息", data.BaseData, &data.Data) {
 				t.Next()
+			} else {
+				t.Error("获取用户信息失败")
 			}
 		})
 	}
@@ -48,6 +50,8 @@ func getStatData(r *Runner) lib.TaskRunner {
 			if r.deal("总体数据", data.BaseData, &data.Data) {
 				fmt.Println("获取总体数据成功")
 				t.Next()
+			} else {
+				t.Error("获取总体数据失败")
 			}
 		})
 	}
@@ -61,6 +65,8 @@ func getBaseData(r *Runner) lib.TaskRunner {
 			if r.deal("浏览量", data.BaseData, &data.Data) {
 				fmt.Println("获取浏览量数据成功")
 				t.Next()
+			} else {
+				t.Error("获取浏览量数据失败")
 			}
 		})
 	}
@@ -73,6 +79,8 @@ func getTrendData(r *Runner) lib.TaskRunner {
 			if r.deal("倾向", data.BaseData, &data.Data) {
 				fmt.Println("获取倾向数据成功")
 				t.Next()
+			} else {
+				t.Error("获取倾向数据失败")
 			}
 		})
 	}
@@ -85,6 +93,8 @@ func getNewFansData(r *Runner) lib.TaskRunner {
 			if r.deal("新增粉丝", data.BaseData, &data.Data) {
 				fmt.Println("获取新增粉丝数据成功")
 				t.Next()
+			} else {
+				t.Error("获取新增粉丝数据失败")
 			}
 		})
 	}
@@ -97,6 +107,8 @@ func getFansData(r *Runner) lib.TaskRunner {
 			if r.deal("粉丝", data.BaseData, &data.Data) {
 				fmt.Println("获取粉丝数据成功")
 				t.Next()
+			} else {
+				t.Error("获取粉丝数据失败")
 			}
 		})
 	}
@@ -110,6 +122,8 @@ func getIncData(r *Runner, index, pName string) lib.TaskRunner {
 				if r.deal("增量数据_"+pName, data.BaseData, &data.Data) {
 					fmt.Println("获取" + pName + "增量数据成功")
 					t.Next()
+				} else {
+					t.Error("获取"+pName+"增量数据失败")
 				}
 			})
 	}
@@ -133,8 +147,10 @@ func getSurveyData(r *Runner, index, pName string) lib.TaskRunner {
 		r.c.Request("https://member.bilibili.com/x/web/data/survey?type="+index,
 			&data, func() {
 				if r.deal("增量来源_"+pName, data.BaseData, &data.Data) {
-					fmt.Println("获取" + pName + "增量数据来源稿件列表成功")
+					fmt.Println("获取" + pName + "增量数据来源稿件成功")
 					t.Next()
+				} else {
+					t.Error("获取"+pName+"增量数据来源稿件失败")
 				}
 			})
 	}
@@ -159,6 +175,8 @@ func getPlaySourceData(r *Runner) lib.TaskRunner {
 			if r.deal("浏览设备来源", data.BaseData, &data.Data) {
 				fmt.Println("获取浏览设备来源数据成功")
 				t.Next()
+			} else {
+				t.Error("获取浏览设备来源数据失败")
 			}
 		})
 	}
@@ -171,6 +189,8 @@ func getPlayAnalysisData(r *Runner, index, name string) lib.TaskRunner {
 			if r.deal("稿件播放量_"+name, data.BaseData, &data.Data) {
 				fmt.Println("获取" + name + "稿件播放量数据成功")
 				t.Next()
+			} else {
+				t.Error("获取" + name + "稿件播放量数据失败")
 			}
 		})
 	}
@@ -195,6 +215,8 @@ func getArchiveData(r *Runner, BV string) lib.TaskRunner {
 			if r.deal("视频数据_"+BV, vData.BaseData, &vData.Data) {
 				fmt.Println("获取视频" + BV + "统计数据成功")
 				t.Next()
+			} else {
+				t.Error("获取视频" + BV + "统计数据失败")
 			}
 		})
 	}
@@ -207,6 +229,8 @@ func getVideoQuitData(r *Runner, BV, cID string) lib.TaskRunner {
 			if r.deal("视频留存率数据_"+cID, qData.BaseData, &qData.Data) {
 				fmt.Println("获取视频" + BV + "-" + cID + "留存率数据成功")
 				t.Next()
+			} else{
+				t.Error("获取视频" + BV + "-" + cID + "留存率数据失败")
 			}
 		})
 	}
@@ -223,6 +247,8 @@ func getVideoData(r *Runner, BV string) lib.TaskRunner {
 					t.AddTask(getVideoQuitData(r, BV, cID))
 				}
 				t.Next()
+			} else {
+				t.Error("获取视频" + BV + "基本数据失败")
 			}
 		})
 	}
@@ -242,6 +268,8 @@ func getAllVideoData(r *Runner, page string) lib.TaskRunner {
 					})
 				}
 				t.Next()
+			} else {
+				t.Error("获取投稿视频第" + page + "页数据失败")
 			}
 		})
 	}
@@ -251,33 +279,20 @@ func getVideoListData(r *Runner) lib.TaskRunner {
 	return func(t *lib.TaskFlow) {
 		data := entity.ArchivesData{}
 		r.c.Request("https://member.bilibili.com/x/web/archives?status=is_pubing%2Cpubed%2Cnot_pubed&pn=1&ps=10&coop=1&interactive=1", &data, func() {
-			if data.Code == 0 {
-				fmt.Println("我的视频数量：", data.Data.Page.Count)
-				for page := 1; (page-1)*10 < data.Data.Page.Count; page += 1 {
-					cPage := strconv.Itoa(page)
-					t.AddTask(getAllVideoData(r, cPage))
+			if r.deal("视频列表数据", data.BaseData, &data.Data) {
+				if data.Code == 0 {
+					fmt.Println("我的视频数量：", data.Data.Page.Count)
+					for page := 1; (page-1)*10 < data.Data.Page.Count; page += 1 {
+						cPage := strconv.Itoa(page)
+						t.AddTask(getAllVideoData(r, cPage))
+					}
+					t.Next()
+				} else {
+					t.Error("获取投稿视频列表数据失败")
 				}
-				t.Next()
 			}
 		})
 	}
-}
-
-func (r *Runner) GetData() {
-	flow := lib.MakeFlow([]lib.TaskRunner{
-		getUserData(r),
-		//getStatData(r),
-		//getBaseData(r),
-		//getTrendData(r),
-		//getNewFansData(r),
-		//getFansData(r),
-		//getAllIncData(r),
-		//getAllSurveyData(r),
-		//getPlaySourceData(r),
-		//getAllPlayAnalysisData(r),
-		//getVideoListData(r),
-	})
-	flow.Next()
 }
 
 func (r *Runner) getDirPath() string {

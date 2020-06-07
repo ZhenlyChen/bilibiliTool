@@ -4,6 +4,7 @@ package entity
 type StatData struct {
 	BaseData
 	Data    struct {
+		Time int64 `json:"time"`
 		FanRecentThirty struct {
 			Follow   map[string]int `json:"follow"`
 			Unfollow map[string]int `json:"unfollow"`
