@@ -17,10 +17,10 @@ export type TMessage = {
 export function createStore() {
   return {
     user: {
-      id: 12257555,
-      name: "站着做梦的你",
+      id: 20693882,
+      name: "电子马龙",
       avatar:
-        "http://i2.hdslb.com/bfs/face/67a825a9066a02c342fe7ff1cce505da54e76a09.jpg",
+        "http://i2.hdslb.com/bfs/face/20074facd7c96fa2a4d120ff81d91efbf711f712.jpg",
     } as TUser,
     message: {
       msg: null,

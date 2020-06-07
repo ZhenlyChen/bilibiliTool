@@ -110,8 +110,8 @@ export const RealTimeData: React.FunctionComponent = Radium(() => {
         style={
           {
             background: "#ffffff",
-            minWidth: 80,
-            margin: 16,
+            minWidth: 100,
+            margin: "16px 16px 16px 0",
             padding: "8px 16px",
             boxShadow: "0 0 20px rgba(43,45,56,.08)",
             ":hover": {
@@ -156,14 +156,18 @@ export const RealTimeData: React.FunctionComponent = Radium(() => {
   };
 
   return useObserver(() => (
-    <Stack gap={15}>
+    <Stack
+      gap={15}
+      style={{
+        padding: 16,
+      }}
+    >
       <Stack.Item>
         <Stack horizontal>
           <Stack.Item>
             <Text
               variant="xLargePlus"
               style={{
-                padding: 16,
                 color: "#fb7299",
               }}
             >
@@ -191,7 +195,6 @@ export const RealTimeData: React.FunctionComponent = Radium(() => {
             style={{
               color: "#282c34",
               fontSize: 14,
-              paddingLeft: 16,
             }}
           >
             更新时间:

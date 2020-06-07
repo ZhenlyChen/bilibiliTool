@@ -27,7 +27,9 @@ export const Home: React.FunctionComponent = () => {
         grow={1}
         styles={{
           root: {
-            padding: 16,
+            overflowY: "auto",
+            height: "100vh",
+            padding: "0 16px",
             background: "#fbfbfb",
           },
         }}

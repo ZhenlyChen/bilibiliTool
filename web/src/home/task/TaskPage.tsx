@@ -178,7 +178,7 @@ export const TaskPage: React.FunctionComponent = () => {
           style={{
             background: "#ffffff",
             width: "100%",
-            margin: 16,
+            margin: "16px 0",
             padding: "8px 16px",
             transition: "all .2s",
             boxShadow: "0 0 20px rgba(43,45,56,.08)",
@@ -252,14 +252,18 @@ export const TaskPage: React.FunctionComponent = () => {
   };
 
   return useObserver(() => (
-    <Stack gap={15}>
+    <Stack
+      gap={15}
+      style={{
+        padding: 16,
+      }}
+    >
       <Stack.Item>
         <Stack horizontal>
           <Stack.Item>
             <Text
               variant="xLargePlus"
               style={{
-                padding: 16,
                 color: "#fb7299",
               }}
             >

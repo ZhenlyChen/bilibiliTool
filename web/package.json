@@ -13,6 +13,7 @@
     "gen": "npx plop"
   },
   "dependencies": {
+    "@types/gl-matrix": "^2.4.5",
     "@types/radium": "^0.24.2",
     "@types/react-router": "^5.1.7",
     "@types/react-router-dom": "^5.1.5",
@@ -31,7 +32,7 @@
     "use-global-hook": "^0.1.12"
   },
   "devDependencies": {
-    "just-stack-react": "^1.0.0",
-    "just-scripts": "^0.27.0"
+    "just-scripts": "^0.43.2",
+    "just-stack-react": "^1.0.0"
   }
 }
