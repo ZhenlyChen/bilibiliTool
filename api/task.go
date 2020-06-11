@@ -2,9 +2,11 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"github.com/ZhenlyChen/BiliBiliStatistics/lib"
 	"github.com/chromedp/chromedp"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 )
 
 func TaskHandler(controller *lib.Controller) gin.HandlerFunc {
@@ -40,6 +42,7 @@ func TaskHandler(controller *lib.Controller) gin.HandlerFunc {
 		flow := lib.MakeFlow(tasks)
 		flow.FinishHandler = func() {
 			lib.MakeToc("./data")
+			controller.DataMaker.Time = 0
 			ctx.JSON(200, BaseRes{0, "任务完成"})
 		}
 		flow.ErrorHandler = func(err string) {
@@ -70,6 +73,12 @@ func LoginHandler(controller *lib.Controller) gin.HandlerFunc {
 			chromedp.UserAgent(`Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`),
 		}
 
+		// 读取配置路径配
+		if b, err := ioutil.ReadFile("./chrome.ini"); err == nil &&  len(b) > 0 {
+			options = append(options, chromedp.ExecPath(string(b)))
+			fmt.Println(string(b))
+		}
+
 		options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
 
 		c, cc := chromedp.NewExecAllocator(ctx, options...)
@@ -86,6 +95,7 @@ func LoginHandler(controller *lib.Controller) gin.HandlerFunc {
 		)
 
 		if err != nil || !controller.Cookies.LoadFromFile() {
+			fmt.Println("登录失败：", err)
 			gCtx.JSON(200, BaseRes{
 				Code: 10000,
 				Msg: "登录失败",

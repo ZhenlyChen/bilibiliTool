@@ -3,15 +3,20 @@ package lib
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/chromedp/cdproto/network"
 	"github.com/chromedp/chromedp"
 	"io/ioutil"
 	"log"
 )
 
+type Cookie struct {
+	Name     string         `json:"name"`
+	Value    string         `json:"value"`
+	Domain   string         `json:"domain"`
+}
+
 type Cookies struct {
-	Data []network.Cookie
+	Data []Cookie
 	header string
 }
 
@@ -24,7 +29,6 @@ func (c *Cookies) GetHeader() string {
 			c.header += data.Name + "=" + data.Value
 		}
 	}
-	fmt.Println(c.header)
 	return c.header
 }
 
@@ -45,7 +49,7 @@ func (c *Cookies) LoadFromFile() bool {
 
 func (c *Cookies) Clear() {
 	ClearCookies()
-	c.Data = []network.Cookie{}
+	c.Data = []Cookie{}
 	c.header = ""
 }
 

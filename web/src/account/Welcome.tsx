@@ -42,7 +42,9 @@ export const WelcomePage: React.FunctionComponent = () => {
       } else {
         showMessage(
           store,
-          "调用登录接口失败：" + res.data.Msg,
+          "调用登录接口失败：" +
+            res.data.Msg +
+            "(请确保电脑上在默认位置上安装了Chrome浏览器，否则将其完整路径写在当前目录chrome.ini中)",
           MessageBarType.error
         );
       }
@@ -82,13 +84,16 @@ export const WelcomePage: React.FunctionComponent = () => {
       >
         B站创作中心数据统计工具
       </Text>
-      <Text>
+      <div>
         {store.user.id === -1 ? (
-          <PrimaryButton text="登录账号" onClick={loginHandler} />
+          <div>
+            <PrimaryButton text="登录账号" onClick={loginHandler} />
+            <p>请在弹出的页面中完成登录</p>
+          </div>
         ) : (
           store.user.id !== 0 && UserInfo(store.user.name, store.user.avatar)
         )}
-      </Text>
+      </div>
 
       {store.user.id !== -1 && <Spinner size={SpinnerSize.large} />}
     </Stack>

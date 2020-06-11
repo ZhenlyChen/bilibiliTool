@@ -126,7 +126,7 @@ export const TaskPage: React.FunctionComponent = () => {
         await runTask(task.key);
       }
     }
-    showMessage(store, "已获取最新数据");
+    // showMessage(store, "已获取最新数据");
   };
 
   const getHandler = (type: string) => {
@@ -253,7 +253,7 @@ export const TaskPage: React.FunctionComponent = () => {
 
   return useObserver(() => (
     <Stack
-      gap={15}
+      gap={8}
       style={{
         padding: 16,
       }}
@@ -287,6 +287,16 @@ export const TaskPage: React.FunctionComponent = () => {
             />
           </Stack.Item>
         </Stack>
+      </Stack.Item>
+      <Stack.Item>
+        <Text
+          style={{
+            fontSize: 14,
+            color: "#6999a7",
+          }}
+        >
+          每日中午12点更新昨日数据
+        </Text>
       </Stack.Item>
       <Stack.Item>
         <Stack wrap horizontal>

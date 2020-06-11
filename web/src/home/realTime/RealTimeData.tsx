@@ -157,7 +157,7 @@ export const RealTimeData: React.FunctionComponent = Radium(() => {
 
   return useObserver(() => (
     <Stack
-      gap={15}
+      gap={8}
       style={{
         padding: 16,
       }}
@@ -193,8 +193,8 @@ export const RealTimeData: React.FunctionComponent = Radium(() => {
         {localState.statData.time && (
           <Text
             style={{
-              color: "#282c34",
               fontSize: 14,
+              color: "#6999a7",
             }}
           >
             更新时间:

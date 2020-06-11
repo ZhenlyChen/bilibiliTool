@@ -1,15 +1,15 @@
 import { Chart, Line, Point } from "bizcharts";
 import React from "react";
 
-export const BaseDataChart = function (source: any, name: string) {
+export const VideoTimeChart = function (source: any, id: string, type: string) {
   let data = [];
   for (let date in source.Data) {
-    const text = source.Data[date]["总体数据.json"];
+    const text = source.Data[date]["视频数据_" + id + ".json"];
     if (text) {
       const valueData = JSON.parse(text);
       data.push({
         date: date,
-        value: valueData[name],
+        value: valueData.stat[type],
       });
     }
   }
@@ -19,9 +19,22 @@ export const BaseDataChart = function (source: any, name: string) {
   }
 
   return (
-    <Chart autoFit height={400} data={data} padding={[10, 40, 50, 40]}>
+    <Chart
+      key={type}
+      autoFit
+      height={300}
+      data={data}
+      padding={[10, 40, 50, 40]}
+    >
       <Line shape="smooth" position="date*value" />
       <Point position="date*value" />
+      <div
+        style={{
+          display: "none",
+        }}
+      >
+        {type}
+      </div>
     </Chart>
   );
 };

@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/ZhenlyChen/BiliBiliStatistics/api"
 	"github.com/ZhenlyChen/BiliBiliStatistics/lib"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"log"
+	"os"
 	"os/exec"
 	"syscall"
 )
@@ -47,7 +49,8 @@ func (s *Server) Run() {
 	if err := r.Run(":8081"); err != nil {
 		fmt.Println("启动服务器失败", err)
 	}
-
+	input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+	fmt.Println(input)
 	//go r.Run(":8081")
 	// ShowUI()
 }

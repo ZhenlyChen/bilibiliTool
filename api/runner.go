@@ -261,11 +261,14 @@ func getAllVideoData(r *Runner, page string) lib.TaskRunner {
 			if r.deal("视频列表数据_"+page, cData.BaseData, &cData.Data) {
 				fmt.Println("获取投稿视频第" + page + "页数据成功")
 				for _, arc := range cData.Data.ArcAudits {
-					BV := arc.Archive.Bvid
-					t.AddTasks([]lib.TaskRunner{
-						getVideoData(r, BV),
-						getArchiveData(r, BV),
-					})
+					if arc.Archive.State == 0 {
+						// 跳过审核中视频
+						BV := arc.Archive.Bvid
+						t.AddTasks([]lib.TaskRunner{
+							getVideoData(r, BV),
+							getArchiveData(r, BV),
+						})
+					}
 				}
 				t.Next()
 			} else {
