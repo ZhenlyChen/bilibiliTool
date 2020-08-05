@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"syscall"
+	"io/ioutil"
 )
 
 type Server struct {
@@ -41,7 +42,15 @@ func (s *Server) Run() {
 	r.Use(static.Serve("/", static.LocalFile("./web/dist", true)))
 	r.Use(static.Serve("/data", static.LocalFile("./data", true)))
 
-	cmd := exec.Command(`cmd`, `/c`, `start`, `chrome`, `--app=http://localhost:8081/#/welcome`)
+	chromePath := "chrome"
+	
+	// 读取配置路径配
+	if b, err := ioutil.ReadFile("./chrome.ini"); err == nil &&  len(b) > 0 {
+		chromePath =  string(b) 
+	}
+	fmt.Println(chromePath)
+
+	cmd := exec.Command(`cmd`, `/c`, `start`, ``, chromePath, `--app=http://localhost:8081/#/welcome`)
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	if err := cmd.Start(); err != nil {
 		log.Println("调用系统浏览器失败", err)
