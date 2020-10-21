@@ -14,12 +14,12 @@ import (
 	"io/ioutil"
 )
 
-type Server struct {
+type LocalServer struct {
 	controller lib.Controller
 }
 
-func InitServer() Server {
-	server := Server{}
+func InitLocalServer() LocalServer {
+	server := LocalServer{}
 	// 生成目录文件
 	lib.MakeToc("./data")
 	// 加载登录状态
@@ -31,7 +31,7 @@ func InitServer() Server {
 	return server
 }
 
-func (s *Server) Run() {
+func (s *LocalServer) Run() {
 	r := gin.Default()
 	r.GET("/api/user", api.LoginRequestHandler(&s.controller))
 	r.GET("/api/stat", api.StatRequestHandler(&s.controller))

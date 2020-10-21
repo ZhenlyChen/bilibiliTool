@@ -14,9 +14,9 @@ require (
 	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
-	github.com/zserge/webview v0.0.0-20200516134046-4caf698fad53
-	golang.org/x/sys v0.0.0-20200602225109-6fdc65e7d980 // indirect
-	golang.org/x/text v0.3.2
+	golang.org/x/net v0.0.0-20201021035429-f5854403a974 // indirect
+	golang.org/x/text v0.3.3
 	google.golang.org/protobuf v1.24.0 // indirect
+	gopkg.in/xmatrixstudio/violet.sdk.go.v3 v3.0.7 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )
