@@ -65,14 +65,14 @@ export const VideoQuitChart = function (source: any, id: string) {
         position="date*value"
         size={2}
         shape={"smooth"}
-        color={"id"}
+        color={["value","#ffeeee-#ff6565"]}
       />
       <Geom
         type="point"
         position="date*value"
         size={4}
         shape={"circle"}
-        color={"id"}
+        color={["value","#ffeeee-#ff6565"]}
         style={{
           stroke: "#fff",
           lineWidth: 1,

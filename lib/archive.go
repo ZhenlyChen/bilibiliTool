@@ -17,6 +17,7 @@ type ArchiveMaker struct {
 	Time int64
 	Data map[string]map[string]string
 	BV map[string]entity.ArchiveBaseData
+	Dynamics map[string]entity.DynamicCard
 }
 
 func NewArchiveMaker(id string) ArchiveMaker {
@@ -25,6 +26,7 @@ func NewArchiveMaker(id string) ArchiveMaker {
 		Time: 0,
 		Data: map[string]map[string]string{},
 		BV: map[string]entity.ArchiveBaseData{},
+		Dynamics: map[string]entity.DynamicCard{},
 	}
 }
 
@@ -49,6 +51,11 @@ func (m *ArchiveMaker) LoadData() {
 				loadData(dirPath, file.Name(), &archivesData.Data)
 				m.AddList(archivesData)
 			}
+			if !file.IsDir() && strings.Contains(file.Name(), "动态列表数据_") {
+				dynamicsList := entity.DynamicList{}
+				loadData(dirPath, file.Name(), &dynamicsList.Data)
+				m.AddDynamics(dynamicsList.Data.Cards)
+			}
 			if jsonData, err := ioutil.ReadFile(dirPath + "/" + file.Name()); err != nil {
 				fmt.Println("读取文件"+file.Name()+"失败")
 			} else {
@@ -64,6 +71,13 @@ func (m *ArchiveMaker) AddList(data entity.ArchivesData) {
 		m.BV[archive.Archive.Bvid] = archive
 	}
 }
+
+func (m *ArchiveMaker) AddDynamics(cards []entity.DynamicCard) {
+	for _, card := range cards {
+		m.Dynamics[card.Desc.DynamicIDStr] = card
+	}
+}
+
 
 func Utf8ToGbk(s []byte) ([]byte, error) {
 	reader := transform.NewReader(bytes.NewReader(s), simplifiedchinese.GBK.NewEncoder())

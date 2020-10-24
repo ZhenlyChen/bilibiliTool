@@ -35,6 +35,9 @@ func TaskHandler(controller *lib.Controller) gin.HandlerFunc {
 		case "video":
 			// 视频数据
 			tasks = append(tasks, getVideoListData(&task))
+		case "dynamics":
+			// 动态数据
+			tasks = append(tasks, getDynamicListData(&task, "0"))
 		default:
 			ctx.JSON(200, BaseRes{10000, "无效的任务类型"})
 			return

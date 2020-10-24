@@ -18,6 +18,7 @@ export const TaskPage: React.FunctionComponent = () => {
       base: "",
       video: "",
       inc: "",
+      dynamics: ""
     } as any,
     loading: true,
     today: moment().format("YYYY-MM-DD"),
@@ -38,6 +39,11 @@ export const TaskPage: React.FunctionComponent = () => {
       key: "video",
       des: "所有投稿视频的数据",
     },
+    {
+      title: "动态数据",
+      key: "dynamics",
+      des: "所有动态的数据",
+    },
   ];
 
   useEffect(() => {
@@ -52,6 +58,7 @@ export const TaskPage: React.FunctionComponent = () => {
         inc: "",
         video: "",
         base: "",
+        dynamics: ""
       };
       for (const file of res.data.reverse()) {
         if (file.isDir) {
@@ -61,7 +68,9 @@ export const TaskPage: React.FunctionComponent = () => {
             lastDate.video === "" ||
             file.name > lastDate.video ||
             lastDate.base === "" ||
-            file.name > lastDate.base
+            file.name > lastDate.base ||
+            lastDate.dynamics === "" ||
+            file.name > lastDate.dynamics
           ) {
             // 检查数据完整性
             const files = (
@@ -70,6 +79,7 @@ export const TaskPage: React.FunctionComponent = () => {
             let incData = false;
             let baseData = false;
             let videoData = false;
+            let dynamicsData = false;
             for (const data of files) {
               const name = data.name;
               if (name.indexOf("增量数据_") === 0) {
@@ -86,6 +96,8 @@ export const TaskPage: React.FunctionComponent = () => {
                 name === "总体数据.json"
               ) {
                 baseData = true;
+              } else if (name.indexOf("动态列表数据_") === 0) {
+                dynamicsData = true;
               }
               if (incData && videoData && baseData) {
                 break;
@@ -103,16 +115,27 @@ export const TaskPage: React.FunctionComponent = () => {
               localState.date.base = file.name;
               lastDate.base = file.name;
             }
+            if (dynamicsData && file.name > lastDate.dynamics) {
+              localState.date.dynamics = file.name;
+              lastDate.dynamics = file.name;
+            }
           }
         }
       }
       localState.loading = false;
+      for (const task of tasks) {
+        // console.log(localState.date[task.key] === '', localState.date[task.key],task.key)
+        if (localState.date[task.key] === '') {
+          localState.date[task.key] = '不存在数据'
+        }
+      }
     } catch (err) {
       if (err.response && err.response.status === 404) {
         // 没有数据
         localState.date.base = "不存在数据";
         localState.date.video = "不存在数据";
         localState.date.inc = "不存在数据";
+        localState.date.dynamics = "不存在数据";
       } else {
         showMessage(store, "获取数据状态失败:" + err, MessageBarType.error);
       }
@@ -161,6 +184,7 @@ export const TaskPage: React.FunctionComponent = () => {
       loading: "#ffce45",
       wait: "#da5247",
     };
+    console.log(localState)
     return tasks.map((v, i) => {
       const date = localState.date[v.key];
       let cardStatus = "数据获取中";
@@ -168,7 +192,7 @@ export const TaskPage: React.FunctionComponent = () => {
       if (date === localState.today) {
         cardColor = color.success;
         cardStatus = "数据已最新";
-      } else if (date !== "更新中..." && date !== "") {
+      } else if ((date !== "更新中..." && date !== "") || date === '不存在数据') {
         cardColor = color.wait;
         cardStatus = "数据待更新";
       }

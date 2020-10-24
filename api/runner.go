@@ -123,7 +123,7 @@ func getIncData(r *Runner, index, pName string) lib.TaskRunner {
 					fmt.Println("获取" + pName + "增量数据成功")
 					t.Next()
 				} else {
-					t.Error("获取"+pName+"增量数据失败")
+					t.Error("获取" + pName + "增量数据失败")
 				}
 			})
 	}
@@ -150,7 +150,7 @@ func getSurveyData(r *Runner, index, pName string) lib.TaskRunner {
 					fmt.Println("获取" + pName + "增量数据来源稿件成功")
 					t.Next()
 				} else {
-					t.Error("获取"+pName+"增量数据来源稿件失败")
+					t.Error("获取" + pName + "增量数据来源稿件失败")
 				}
 			})
 	}
@@ -229,13 +229,14 @@ func getVideoQuitData(r *Runner, BV, cID string) lib.TaskRunner {
 			if r.deal("视频留存率数据_"+cID, qData.BaseData, &qData.Data) {
 				fmt.Println("获取视频" + BV + "-" + cID + "留存率数据成功")
 				t.Next()
-			} else{
+			} else {
 				t.Error("获取视频" + BV + "-" + cID + "留存率数据失败")
 			}
 		})
 	}
 }
 
+// 获取视频基本数据
 func getVideoData(r *Runner, BV string) lib.TaskRunner {
 	return func(t *lib.TaskFlow) {
 		vData := entity.VideosData{}
@@ -254,6 +255,7 @@ func getVideoData(r *Runner, BV string) lib.TaskRunner {
 	}
 }
 
+// 获取视频具体数据
 func getAllVideoData(r *Runner, page string) lib.TaskRunner {
 	return func(t *lib.TaskFlow) {
 		cData := entity.ArchivesData{}
@@ -278,6 +280,7 @@ func getAllVideoData(r *Runner, page string) lib.TaskRunner {
 	}
 }
 
+// 获取视频列表数据
 func getVideoListData(r *Runner) lib.TaskRunner {
 	return func(t *lib.TaskFlow) {
 		data := entity.ArchivesData{}
@@ -292,6 +295,26 @@ func getVideoListData(r *Runner) lib.TaskRunner {
 					t.Next()
 				} else {
 					t.Error("获取投稿视频列表数据失败")
+				}
+			}
+		})
+	}
+}
+
+func getDynamicListData(r *Runner, offsetID string) lib.TaskRunner {
+	return func(t *lib.TaskFlow) {
+		data := entity.DynamicList{}
+		userId := strconv.Itoa(r.userID)
+		r.c.Request("https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?visitor_uid="+
+			userId+"&host_uid="+userId+"&offset_dynamic_id="+offsetID+"&need_top=1", &data, func() {
+			if r.deal("动态列表数据_"+offsetID, data.BaseData, &data.Data) {
+				if data.Code == 0 {
+					if data.Data.HasMore == 1 {
+						t.AddTask(getDynamicListData(r, data.Data.Cards[len(data.Data.Cards) - 1].Desc.DynamicIDStr))
+					}
+					t.Next()
+				} else {
+					t.Error("获取动态列表数据失败")
 				}
 			}
 		})
@@ -321,4 +344,3 @@ func (r *Runner) deal(name string, baseData entity.BaseData, data interface{}) b
 	return true
 
 }
-

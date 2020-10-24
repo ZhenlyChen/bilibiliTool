@@ -7,6 +7,7 @@ import { RealTimeData } from "./realTime/RealTimeData";
 import { HistoryData } from "./history/HistoryData";
 import { TaskPage } from "./task/TaskPage";
 import { HistoryVideo } from "./history/HistoryVideo";
+import { HistoryDynamics } from "./history/HistoryDynamics";
 
 export const Home: React.FunctionComponent = () => {
   const store = useStore();
@@ -37,6 +38,7 @@ export const Home: React.FunctionComponent = () => {
         <Switch>
           <Route path="/history" component={HistoryData} />
           <Route path="/video" component={HistoryVideo} />
+          <Route path="/dynamics" component={HistoryDynamics} />
           <Route path="/task" component={TaskPage} />
           <Route path="/" component={RealTimeData} />
         </Switch>

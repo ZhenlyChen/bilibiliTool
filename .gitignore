@@ -7,3 +7,4 @@ bin/*
 cookies.json
 *.exe
 *.dll
+*.log

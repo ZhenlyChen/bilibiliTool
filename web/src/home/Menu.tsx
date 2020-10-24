@@ -39,6 +39,11 @@ const navLinkGroups: INavLinkGroup[] = [
         key: "video",
       },
       {
+        name: "动态数据分析",
+        url: "/#/dynamics",
+        key: "dynamics",
+      },
+      {
         name: "获取当日数据",
         url: "/#/task",
         key: "task",
@@ -63,6 +68,8 @@ export const AppMenu: React.FunctionComponent = () => {
     key = "task";
   } else if (location.pathname.indexOf("/video") === 0) {
     key = "video";
+  } else if (location.pathname.indexOf("/dynamics") === 0) {
+    key = "dynamics";
   } else {
     key = "realTimeData";
   }
