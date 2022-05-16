@@ -21,7 +21,7 @@
     "bizcharts": "^4.0.4",
     "mobx": "^5.15.4",
     "mobx-react-lite": "^2.0.7",
-    "moment": "^2.26.0",
+    "moment": "^2.29.2",
     "office-ui-fabric-react": "^7.0.0",
     "radium": "^0.26.0",
     "react": "^16.8.6",
