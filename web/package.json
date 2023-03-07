@@ -31,7 +31,7 @@
     "use-global-hook": "^0.1.12"
   },
   "devDependencies": {
-    "just-scripts": "^0.43.2",
+    "just-scripts": "^2.1.0",
     "just-stack-react": "^1.0.0"
   }
 }
